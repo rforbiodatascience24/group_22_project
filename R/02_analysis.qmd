@@ -1,3 +1,4 @@
 ```{r}
-
+clean_data |> 
+  select(rate)
 ```
