@@ -13,15 +13,11 @@ Quarto enables you to weave together content and executable code into a finished
 When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
 
 ```{r}
+library(dplyr)
+library(tidyr)
 data <- read.csv("~/projects/group_22_project/data/Brauer2008_Data.csv", header = TRUE)
-
+data
 ```
 
-You can add options to executable code like this
-
-```{r}
-#| echo: false
-2 * 2
+```         
 ```
-
-The `echo: false` option disables the printing of code (only output is displayed).
