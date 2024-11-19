@@ -6,6 +6,6 @@ editor: visual
 
 ```{r}
 data <- read.csv("~/projects/group_22_project/data/Brauer2008_DataSet1.csv", header = TRUE)
-data[2, ]
+data[3, ]
 
 ```
