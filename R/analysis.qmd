@@ -4,12 +4,11 @@ format: html
 editor: visual
 ---
 
-## Nico og Ulrikke 
+## Nico og Ulrikke
 
 ```{r}
-ggplot2
-a + geom_path(lineend = "butt",
-linejoin = "round", linemitre = 1)
-x, y, alpha, color, group, linetype, size 
+ggplot(
+  filter(clean_data, BP == "leucine biosynthesis"),
+  aes(rate, expression, color = nutrient)) +
+geom_line()
 ```
-
