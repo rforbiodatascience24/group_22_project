@@ -6,7 +6,7 @@ editor: visual
 
 ```{r}
 ggplot(
-  filter(clean_data_df, name == "LEU1"),
+  filter(clean_data, name == "LEU1"),
   aes(rate, expression, color = nutrient)) +
 geom_line()
 
