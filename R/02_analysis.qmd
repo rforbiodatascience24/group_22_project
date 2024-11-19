@@ -1,4 +1,4 @@
 ```{r}
-clean_data |> 
-  select(rate)
+ggplot(clean_data) |> 
+  data = 
 ```
