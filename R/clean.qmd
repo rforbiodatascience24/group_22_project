@@ -27,4 +27,8 @@ clean_data <- separate(
   sep = 1,  # Split at the first character
   convert = TRUE  # Convert to appropriate data types if possible (e.g., numeric)
 )
+
+clean_data_df <- clean_data %>%
+  mutate(rate = as.numeric(rate),
+         expression = as.numeric(expression))
 ```
