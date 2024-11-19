@@ -5,7 +5,10 @@ editor: visual
 ---
 
 ```{r}
-cleaned_data <- data %>%
-  separate(NAME, c("name", "BP", "MF", "systematic_name", "number"), sep = "\\|\\|") 
+cleaned_data <- separate(
+  data = data,
+  col = NAME,
+  into = c("name", "BP", "MF", "systematic_name", "number"), 
+  sep = "\\|\\|") 
 
 ```
