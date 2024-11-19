@@ -1,9 +1,0 @@
----
-title: "02_analysis"
-format: html
-editor: visual
----
-
-```{r}
-1 + 1
-```
