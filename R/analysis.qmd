@@ -7,21 +7,11 @@ editor: visual
 ## Nico og Ulrikke
 
 ```{r}
-colnames(clean_data)
+ggplot(clean_data, aes(x = expression)) +
+    geom_histogram(bins = 10) 
 ```
 
 ```{r}
-filtered_data <- filter(cleaned_data, name == "LEU1")
-View(filtered_data)
-
 
 ```
 
-```{r}
-# Convert the time series to a data frame
-filtered_data_df <- as.data.frame(filtered_data)
-
-# Now use ggplot with the converted data frame
-ggplot(filtered_data_df, aes(rate, expression, color = nutrient)) +
-  geom_point()
-```
