@@ -5,8 +5,7 @@ editor: visual
 ---
 
 ```{r}
-cleaned_data <- data 
-  separate(NAME, c("name", "BP", "MF", "systematic_name", "number"), sep = "\\|\\|")
-  
-cleaned_data[1:3]
+cleaned_data <- data %>%
+  separate(NAME, c("name", "BP", "MF", "systematic_name", "number"), sep = "\\|\\|") 
+
 ```
