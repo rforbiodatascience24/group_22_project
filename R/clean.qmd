@@ -5,10 +5,12 @@ editor: visual
 ---
 
 ```{r}
-cleaned_data <- separate(
+clean_data <- separate(
   data = data,
   col = NAME,
   into = c("name", "BP", "MF", "systematic_name", "number"), 
   sep = "\\|\\|") 
+
+clean_data[] <- lapply(clean_data, function(x) str_trim(x, side = "both"))
 
 ```

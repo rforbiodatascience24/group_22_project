@@ -13,5 +13,5 @@ data[3, ]
 ```{r}
 library(tidyr)
 library(readr)
-
+library(stringr)
 ```
