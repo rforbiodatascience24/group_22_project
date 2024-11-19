@@ -1,12 +1,9 @@
 ---
-title: "analysis"
+title: "02_analysis"
 format: html
 editor: visual
 ---
 
-## Nico og Ulrikke 
-
 ```{r}
-
+1 + 1
 ```
-
