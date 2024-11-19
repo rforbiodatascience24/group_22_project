@@ -13,4 +13,18 @@ clean_data <- separate(
 
 clean_data[] <- lapply(clean_data, function(x) str_trim(x, side = "both"))
 
+clean_data <- pivot_longer(
+  clean_data, 
+  cols = G0.05:U0.3,  
+  names_to = "sample",  
+  values_to = "expression" 
+)
+
+clean_data <- separate(
+  clean_data, 
+  col = sample, 
+  into = c("nutrient", "rate"), 
+  sep = 1,  # Split at the first character
+  convert = TRUE  # Convert to appropriate data types if possible (e.g., numeric)
+)
 ```
