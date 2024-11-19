@@ -7,7 +7,7 @@ editor: visual
 ## Nico og Ulrikke 
 
 ```{r}
-gg
+ggplot2
 a + geom_path(lineend = "butt",
 linejoin = "round", linemitre = 1)
 x, y, alpha, color, group, linetype, size 
