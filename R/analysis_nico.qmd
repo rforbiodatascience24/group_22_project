@@ -11,3 +11,21 @@ ggplot(
 geom_line()
 
 ```
+
+```{r}
+ggplot(
+  filter(clean_data, BP == "leucine biosynthesis"),
+  aes(rate, expression, color = nutrient)) +
+  geom_line() +
+  facet_wrap(~name)
+
+```
+
+```{r}
+ggplot(
+  data = clean_data[1:6,],
+  aes(rate, expression, color = nutrient)) +
+geom_point()+
+  geom_smooth(method = "lm")
+
+```
