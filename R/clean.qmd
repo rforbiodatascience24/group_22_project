@@ -13,6 +13,8 @@ clean_data <- separate(
 
 clean_data[] <- lapply(clean_data, function(x) str_trim(x, side = "both"))
 
+clean_data <- select(clean_data, -number, -GID, -YORF, -GWEIGHT)
+
 clean_data <- pivot_longer(
   clean_data, 
   cols = G0.05:U0.3,  
