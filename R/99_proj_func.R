@@ -1,3 +1,10 @@
+# Creating data directories
+create_dir <- function(path){
+  if ( !dir.exists(path) ){
+    dir.create(path)
+  }
+}
+
 # Making a function that downloads data from the NCBI server
 download_dataset_ncbi <- function(raw_dir) {
 
