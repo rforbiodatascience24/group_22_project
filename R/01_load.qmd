@@ -5,7 +5,7 @@ editor: visual
 ---
 
 ```{r}
-data <- read.csv("~/projects/group_22_project/data/Brauer2008_DataSet1.csv", header = TRUE, sep = "\t")
+data <- read.csv("~/projects/group_22_project/_raw/Brauer2008_DataSet1.csv", header = TRUE, sep = "\t")
 data[3, ]
 
 ```
