@@ -33,13 +33,8 @@ data[3, ]
 ```{r}
 raw_dir <- "../_raw/"
 download_dataset_ncbi(raw_dir)
-download_data_annotation_ncbi(raw_dir)
 
 ncbi_data <- read_unstructured_ncbi_table(str_c(raw_dir, "raw_ncbi_data.txt.gz"))
-annotation_data <- read_bgx_file(raw_dir, "raw_annotation.bgx.gz")
 
 ncbi_data |> sample_n(5)
-
-annotation_data
-annotation_data$probes
 ```
