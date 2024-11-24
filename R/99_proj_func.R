@@ -22,4 +22,31 @@ download_dataset_ncbi <- function(raw_dir) {
 
 }
 
+download_data_annotation_ncbi <- function(raw_dir) {
+
+  anotation_file_name <- "raw_annotation.bgx.gz"
+  file_path <- str_c(raw_dir, anotation_file_name)
+
+  url_ncbi <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE18044&format=file"
+  download.file(url_ncbi, str_c(raw_dir, anotation_file_name))
+
+}
+
+read_ncbi_table <- function(file_path) {
+
+  table <- read.table(file_path, header=FALSE, fill = TRUE, col.names = str_c("col_",seq_len(200)))
+  return(table)
+
+}
+
+read_bgx_file <- function(raw_dir, file_name) {
+
+  if (file.exists(str_c(raw_dir, "raw_annotation.bgx")))
+    return (readBGX(str_c(raw_dir, "raw_annotation.bgx")))
+
+  outputFilePath <- gunzip(str_c(raw_dir, file_name), remove=FALSE)
+  return (readBGX(outputFilePath))
+
+}
+
 
