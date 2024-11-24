@@ -15,12 +15,16 @@ source("../R/99_proj_func.R")
 ```{r}
 #| message: false
 library(tidyr)
+library(R.utils)
+library(httr)
 library(readr)
 library(stringr)
 library(ggplot2)
 library(tidyverse)
 library(dplyr)
 library(reshape2)
+library(jsonlite)
+library(illuminaio)
 ```
 
 ### Load files
