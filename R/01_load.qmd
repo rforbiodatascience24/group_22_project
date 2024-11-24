@@ -23,18 +23,13 @@ library(dplyr)
 library(reshape2)
 ```
 
-```{r}
-data <- read.csv("~/projects/group_22_project/_raw/Brauer2008_DataSet1.csv", header = TRUE, sep = "\t")
-data[3, ]
-```
-
 ### Load files
 
 ```{r}
 raw_dir <- "../_raw/"
 download_dataset_ncbi(raw_dir)
 
-ncbi_data <- read_unstructured_ncbi_table(str_c(raw_dir, "raw_ncbi_data.txt.gz"))
+#ncbi_data <- read_unstructured_ncbi_table(str_c(raw_dir, "raw_ncbi_data.txt.gz"))
 
-ncbi_data |> sample_n(5)
+#ncbi_data |> sample_n(5)
 ```
