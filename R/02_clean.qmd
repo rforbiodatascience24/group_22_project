@@ -4,34 +4,8 @@ format: html
 editor: visual
 ---
 
+## Loading data
+
 ```{r}
-clean_data <- separate(
-  data = data,
-  col = NAME,
-  into = c("name", "BP", "MF", "systematic_name", "number"), 
-  sep = "\\|\\|") 
-
-clean_data[] <- lapply(clean_data, function(x) str_trim(x, side = "both"))
-
-clean_data <- select(clean_data, -number, -GID, -YORF, -GWEIGHT)
-
-clean_data <- pivot_longer(
-  clean_data, 
-  cols = G0.05:U0.3,  
-  names_to = "sample",  
-  values_to = "expression" 
-)
-
-clean_data <- separate(
-  clean_data, 
-  col = sample, 
-  into = c("nutrient", "rate"), 
-  sep = 1,  # Split at the first character
-  convert = TRUE  # Convert to appropriate data types if possible (e.g., numeric)
-)
-
-clean_data <- mutate(
-  clean_data,
-  rate = as.numeric(rate),
-         expression = as.numeric(expression))
+ncbi_data <- read_tsv("../data/01_ncbi_data.tsv.gz")
 ```
