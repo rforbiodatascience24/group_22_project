@@ -1,4 +1,0 @@
-```{r}
-ggplot(clean_data) |> 
-  data = 
-```

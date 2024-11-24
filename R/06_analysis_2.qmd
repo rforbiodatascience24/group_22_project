@@ -1,0 +1,9 @@
+```{r}
+ggplot(
+  data = clean_data[1:6, ],
+  mapping = aes(x = rate, y = expression, color = nutrient)
+) +
+  geom_point()+
+  geom_smooth(method = "lm",alpha=0)
+
+```
