@@ -22,23 +22,28 @@ ncbi_data <- read_tsv("../data/01_ncbi_data.tsv.gz")
 First we extract all data we want to analyze from the data set
 
 ```{r}
-# Extracting relavant data
-ncbi_data_dirty <- ncbi_data |> 
+# Extracting relavant data regarding characteristics of the patients
+ncbi_characteristics_dirty <- ncbi_data |> 
   as_tibble() |> 
   filter(col_1 == "ID_REF" | 
-        col_1 == "!Sample_characteristics_ch1" | 
-        str_detect(col_1,"ILMN")) 
+        col_1 == "!Sample_characteristics_ch1")
 
+# Extracting relavant data regarding genes and gene expression 
+ncbi_genes_dirty <- ncbi_data |> 
+  as_tibble() |> 
+  filter(col_1 == "ID_REF" |
+    str_detect(col_1,"ILMN"))
 
-# View sampled data (dirty) 
-ncbi_data_dirty
+# View data (dirty) 
+ncbi_characteristics_dirty
+ncbi_genes_dirty
+
 
 ```
 
-## Data Wrangling
+## Data Wrangling - Characteristics
 
 ```{r}
-# Renaming
 
 
 # Transforming from long to wide format
@@ -46,4 +51,15 @@ ncbi_data_dirty
 
 #ncbi_data_dirty |> 
   #pivot_wider(names_from = col_1, values_from = everything())
+
+
+# Renaming
+ncbi_data_dirty |> 
+  rename(Sample_ID = ID_REF)
+```
+
+## Data Wrangling - Genes
+
+```{r}
+
 ```
