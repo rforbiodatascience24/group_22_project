@@ -27,7 +27,7 @@ ncbi_data_dirty <- ncbi_data |>
   as_tibble() |> 
   filter(col_1 == "ID_REF" | 
         col_1 == "!Sample_characteristics_ch1" | 
-        str_detect(col_1,"ILMN"))
+        str_detect(col_1,"ILMN")) 
 
 
 # View sampled data (dirty) 
@@ -36,3 +36,14 @@ ncbi_data_dirty
 ```
 
 ## Data Wrangling
+
+```{r}
+# Renaming
+
+
+# Transforming from long to wide format
+#ncbi_data_wide <- 
+
+#ncbi_data_dirty |> 
+  #pivot_wider(names_from = col_1, values_from = everything())
+```
