@@ -33,13 +33,13 @@ library(illuminaio)
 raw_dir <- "../_raw/"
 
 download_dataset_ncbi(raw_dir)
-download_data_annotation_ncbi(raw_dir)
+#download_data_annotation_ncbi(raw_dir)
 
 ncbi_data <- read_ncbi_table(str_c(raw_dir, "raw_data_ncbi.txt.gz"))
-annotation_data <- read_bgx_file(raw_dir, "raw_annotation.bgx.gz")
+#annotation_data <- read_bgx_file(raw_dir, "raw_annotation.bgx.gz")
 
 ncbi_data
-annotation_data
+#annotation_data
 ```
 
 ### Write files
@@ -50,6 +50,6 @@ The files that we have just loaded above should be written to a tsv file in our 
 write_tsv(ncbi_data,
             file = "../data/01_ncbi_data.tsv.gz")
 
-write_tsv(annotation_data,
-            file = "../data/01_ncbi_annot_probes.tsv.gz")
+#write_tsv(annotation_data,
+            #file = "../data/01_ncbi_annot_probes.tsv.gz")
 ```
