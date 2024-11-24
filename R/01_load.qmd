@@ -4,13 +4,16 @@ format: html
 editor: visual
 ---
 
-```{r}
-data <- read.csv("~/projects/group_22_project/_raw/Brauer2008_DataSet1.csv", header = TRUE, sep = "\t")
-data[3, ]
+### Source functions
 
+```{r}
+source("../R/99_proj_func.R")
 ```
 
+### Loading libraries
+
 ```{r}
+#| message: false
 library(tidyr)
 library(readr)
 library(stringr)
@@ -18,5 +21,9 @@ library(ggplot2)
 library(tidyverse)
 library(dplyr)
 library(reshape2)
+```
 
+```{r}
+data <- read.csv("~/projects/group_22_project/_raw/Brauer2008_DataSet1.csv", header = TRUE, sep = "\t")
+data[3, ]
 ```
