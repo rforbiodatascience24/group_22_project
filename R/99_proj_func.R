@@ -23,7 +23,6 @@ download_dataset_ncbi <- function(raw_dir) {
 }
 
 download_data_annotation_ncbi <- function(raw_dir) {
-
   anotation_file_name <- "raw_annotation.bgx.gz"
   file_path <- str_c(raw_dir, anotation_file_name)
 
