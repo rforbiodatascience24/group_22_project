@@ -6,7 +6,7 @@ editor: visual
 
 ```{r}
 ggplot(
-  filter(clean_data, name == "LEU1"),
+  filter(clean_data, name == "SFB2"),
   aes(rate, expression, color = nutrient)) +
 geom_line()
 
@@ -14,7 +14,7 @@ geom_line()
 
 ```{r}
 ggplot(
-  filter(clean_data, BP == "leucine biosynthesis"),
+  filter(clean_data, BP == "DNA repair"),
   aes(rate, expression, color = nutrient)) +
   geom_line() +
   facet_wrap(~name)
@@ -23,9 +23,81 @@ ggplot(
 
 ```{r}
 ggplot(
-  data = clean_data[1:6,],
+  data = clean_data,
   aes(rate, expression, color = nutrient)) +
 geom_point()+
   geom_smooth(method = "lm")
+
+```
+
+```{r}
+# Histogram for 'rate'
+ggplot(clean_data, aes(x = rate)) +
+  geom_histogram(bins = 30, fill = "skyblue", color = "black") +
+  geom_density(alpha = 0.2, fill = "blue") +
+  ggtitle("Distribution of Rate") +
+  xlab("Rate") +
+  ylab("Frequency")
+
+# Histogram for 'expression'
+ggplot(clean_data, aes(x = expression)) +
+  geom_histogram(bins = 30, fill = "pink", color = "black") +
+  geom_density(alpha = 0.2, fill = "red") +
+  ggtitle("Distribution of Expression") +
+  xlab("Expression") +
+  ylab("Frequency")
+
+```
+
+```{r}
+# Boxplot for 'rate' grouped by 'nutrient'
+ggplot(clean_data, aes(x = nutrient, y = rate)) +
+  geom_boxplot(fill = "lightblue") +
+  ggtitle("Rate by Nutrient") +
+  xlab("Nutrient") +
+  ylab("Rate")
+
+# Boxplot for 'expression' grouped by 'nutrient'
+ggplot(clean_data, aes(x = nutrient, y = expression)) +
+  geom_boxplot(fill = "lightgreen") +
+  ggtitle("Expression by Nutrient") +
+  xlab("Nutrient") +
+  ylab("Expression")
+
+```
+
+```{r}
+ggplot(clean_data, aes(x = rate, y = expression, color = nutrient)) +
+  geom_point(alpha = 0.7) +
+  ggtitle("Rate vs Expression by Nutrient") +
+  xlab("Rate") +
+  ylab("Expression") +
+  theme_minimal()
+
+
+```
+
+```{r}
+# Compute the correlation matrix
+correlation_matrix <- cor(clean_data %>% select(rate, expression), use = "complete.obs")
+
+# Melt the matrix for ggplot
+correlation_melt <- melt(correlation_matrix)
+
+# Heatmap of correlations
+ggplot(correlation_melt, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0) +
+  ggtitle("Correlation Matrix") +
+  theme_minimal()
+
+```
+
+```{r}
+ggplot(clean_data, aes(x = nutrient, y = expression)) +
+  geom_violin(fill = "lightblue") +
+  ggtitle("Expression Distribution by Nutrient") +
+  xlab("Nutrient") +
+  ylab("Expression")
 
 ```
