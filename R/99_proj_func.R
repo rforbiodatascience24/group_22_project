@@ -33,7 +33,7 @@ download_data_annotation_ncbi <- function(raw_dir) {
 
 read_ncbi_table <- function(file_path) {
 
-  table <- read.table(file_path, header=FALSE, fill = TRUE, col.names = str_c("col_",seq_len(200)))
+  table <- read.table(file_path, header=FALSE, fill = TRUE, col.names = str_c("col_",seq_len(77)))
   return(table)
 
 }
