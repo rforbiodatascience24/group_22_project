@@ -1,21 +1,51 @@
 ---
-title: "clean"
+title: "Data Cleaning and Transformation"
 format: html
 editor: visual
 ---
 
-## Loading Libraries
+## Loading Required Libraries
 
 ```{r}
-#| message: false
+# Suppress package messages
 library(tidyverse)
 ```
 
-## Loading data
-
 ```{r}
+# Load data from a compressed tab-separated file
 ncbi_data <- read_tsv("../data/01_ncbi_data.tsv.gz")
 ```
+
+```{r}
+# Extracting patient characteristics
+ncbi_characteristics_dirty <- ncbi_data |> 
+  as_tibble() |> 
+  filter(col_1 == "ID_REF" | 
+         col_1 == "!Sample_characteristics_ch1")
+
+# Extracting gene and gene expression data
+ncbi_genes_dirty <- ncbi_data |> 
+  as_tibble() |> 
+  filter(col_1 == "ID_REF" | 
+         str_detect(col_1, "ILMN"))
+
+# Preview extracted data (raw and unprocessed)
+ncbi_characteristics_dirty
+ncbi_genes_dirty
+```
+
+# Placeholder for data transformation from long to wide format
+# Uncomment and implement pivot_wider if needed
+# ncbi_data_wide <- ncbi_characteristics_dirty |> 
+#   pivot_wider(names_from = col_1, values_from = everything())
+
+# Renaming columns for clarity
+ncbi_characteristics_clean <- ncbi_characteristics_dirty |> 
+  rename(Sample_ID = ID_REF)
+
+# Preview cleaned characteristics data
+ncbi_characteristics_clean
+
 
 ## Extracting relevant data from NCBI Data
 
@@ -23,7 +53,7 @@ First we extract all data we want to analyze from the data set
 
 ```{r}
 # Extracting relavant data regarding characteristics of the patients
-ncbi_chr_dirty <- ncbi_data |> 
+ncbi_characteristics_dirty <- ncbi_data |> 
   as_tibble() |> 
   filter(col_1 == "ID_REF" | 
         col_1 == "!Sample_characteristics_ch1")
@@ -35,7 +65,7 @@ ncbi_genes_dirty <- ncbi_data |>
     str_detect(col_1,"ILMN"))
 
 # View data (dirty) 
-ncbi_chr_dirty
+ncbi_characteristics_dirty
 ncbi_genes_dirty
 
 
@@ -44,36 +74,18 @@ ncbi_genes_dirty
 ## Data Wrangling - Characteristics
 
 ```{r}
-library(tidyverse)
 
-# Step 1: Filter and clean characteristics
-ncbi_chr_clean <- ncbi_chr_dirty |>
-  filter(col_1 == "!Sample_characteristics_ch1") |>
-  pivot_longer(cols = starts_with("col_"), names_to = "Sample", values_to = "Characteristic_Value") |>
-  separate(Characteristic_Value, into = c("Characteristic", "Value"), sep = ": ", fill = "right") |>
-  pivot_wider(names_from = Characteristic, values_from = Value)
 
-# Step 2: Extract and join ID_REF
-ID_REF_values <- ncbi_chr_dirty |>
-  filter(col_1 == "ID_REF") |>
-  pivot_longer(cols = starts_with("col_"), names_to = "Sample", values_to = "ID_REF")
+# Transforming from long to wide format
+#ncbi_data_wide <- 
 
-# Ensure alignment by joining on "Sample"
-ncbi_chr_clean <- ncbi_chr_clean |>
-  left_join(ID_REF_values, by = "Sample")
+#ncbi_data_dirty |> 
+  #pivot_wider(names_from = col_1, values_from = everything())
 
-# Step 3: Rename columns
-ncbi_chr_clean <- ncbi_chr_clean |>
-  rename(
-    Age = `age (years)`,
-    Status = status,
-    BMI = `maternal bmi`,
-    Parity = parity,
-    Gestational_Age = `gestational age (weeks)`,
-    Mode_Of_Delivery = `mode of delivery`,
-    Placental_Volume = `placental volume (cm3)`
-  ) |>
-  select(ID_REF, everything())  # Ensure ID_REF is the first column
+
+# Renaming
+ncbi_data_dirty |> 
+  rename(Sample_ID = ID_REF)
 ```
 
 ## Data Wrangling - Genes
