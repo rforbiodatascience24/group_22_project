@@ -13,29 +13,29 @@ library(tidyverse)
 ## Extracting Sample IDs
 
 ```{r}
-# Inspect the dataset systematically to locate the actual sample IDs
-sample_id_row <- ncbi_data[which(ncbi_data$col_1 == "ID_REF"), -1]  # Adjust "ID_REF" if needed to match the key identifier
-sample_ids <- as.character(sample_id_row)
+# Inspecting the dataset to locate where the sample ID's are
+sample_id_row <- ncbi_data[which(ncbi_data$col_1 == "ID_REF"), -1]  # Finding all places in col1 that is named ID_REF and extracts all values associated with this observation
+sample_ids <- as.character(sample_id_row)                           # Transforming sample_ids to characters
 
-# Debug: Print extracted sample IDs
+# Printing extracted sample IDs
 print(sample_ids)
 ```
 
 ## Extracting and Filtering Relevant Data
 
 ```{r}
-# Extract patient characteristics data
-ncbi_characteristics_dirty <- ncbi_data %>%
-  as_tibble() %>%
-  filter(col_1 == "!Sample_characteristics_ch1") %>%
-  select(-col_1)  # Drop the first column
+# Extracting patient characteristics data
+ncbi_characteristics_dirty <- ncbi_data |> 
+  as_tibble() |> 
+  filter(col_1 == "!Sample_characteristics_ch1") |> 
+  select(-col_1)  # Taking everything but the first column
 
-# Extract gene expression data
-ncbi_genes_dirty <- ncbi_data %>%
-  as_tibble() %>%
-  filter(str_detect(col_1, "^ILMN"))  # Filter rows with gene IDs (e.g., starting with "ILMN")
+# Extracting gene expression data
+ncbi_genes_dirty <- ncbi_data |> 
+  as_tibble() |> 
+  filter(str_detect(col_1, "^ILMN"))  # Searching for observations starting with ILMN in col1
 
-# Debug: View the filtered data
+# Viewing the filtered data
 print(head(ncbi_characteristics_dirty))
 print(head(ncbi_genes_dirty))
 ```
@@ -44,16 +44,25 @@ print(head(ncbi_genes_dirty))
 
 ```{r}
 # Transpose and tidy the characteristics data
-tidy_characteristics <- ncbi_characteristics_dirty %>%
-  pivot_longer(cols = everything(), names_to = "Sample", values_to = "Characteristic") %>%
-  separate(Characteristic, into = c("Variable", "Value"), sep = ": ", extra = "merge") %>%
-  pivot_wider(names_from = Variable, values_from = Value) %>%
-  mutate(Sample_ID = sample_ids[1:nrow(.)]) %>%  # Align sample IDs
-  relocate(Sample_ID)  # Move Sample_ID to the first column
+tidy_characteristics <- ncbi_characteristics_dirty |> 
+  pivot_longer(cols = everything(),                      # all column
+               names_to = "Sample",                      # all column names to sample
+               values_to = "Characteristic") |>          # all values to characteristics
+  separate(Characteristic, 
+           into = c("Variable", "Value"),                # making a vector to split up into variable and value 
+           sep = ": ") |>                                    # separating based on :
+           #extra = "merge") 
+  pivot_wider(names_from = Variable, 
+              values_from = Value) |> 
+  mutate(Sample_ID = sample_ids[1:nrow(.)]) |>           # taking everything from sample_ids and puts it into the new Sample_ID column 
+  relocate(Sample_ID)                                    # moving Sample_ID to the first column
 
+
+
+# 
 # Drop the "Sample" column and remove rows with "not available"
-tidy_characteristics <- tidy_characteristics %>%
-  select(-Sample) %>%  # Drop the "Sample" column
+tidy_characteristics <- tidy_characteristics |> 
+  select(-Sample) |>   # Drop the "Sample" column
   filter(across(everything(), ~ !str_detect(., "not available"), .names = "check"))  # Remove rows with "not available"
 
 # Debug: Verify the reshaped characteristics data
