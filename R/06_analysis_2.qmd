@@ -1,0 +1,80 @@
+Gene expression code:\
+\
+
+```{r}
+# Load the dplyr library for data manipulation
+library(dplyr)
+
+# Step 1: Select gene expression columns (starting with 'ilmn_')
+gene_columns <- grep("^ilmn_", names(merged_data), value = TRUE)
+
+# Step 2: Group by 'status' and calculate mean for each gene expression column
+result <- merged_data %>%
+  group_by(status)  %>%
+  summarise(across(all_of(gene_columns), mean, na.rm = TRUE)) %>%
+  pivot_longer(cols = -status, names_to = "gene", values_to = "mean_expression") %>%
+  pivot_wider(names_from = status, values_from = mean_expression)
+
+# Step 4: Calculate log2 fold change for each gene (smokers vs non-smokers)
+result <- result %>%
+  mutate(log2_fold_change = log2(`smoker` / `non-smoker`))
+
+print(result)
+
+
+
+
+
+```
+
+Top 30 genes overall
+
+```{r}
+# Assuming 'result' already contains the log2 fold change for each gene
+
+# Step 1: Sort by the absolute value of log2 fold change (numerically furthest from 0)
+top_genes <- result %>%
+  mutate(abs_log2fc = abs(log2_fold_change)) %>%  # Calculate absolute log2 fold change
+  arrange(desc(abs_log2fc)) %>%  # Sort by the absolute value in descending order
+  head(30)  # Select top 30 genes
+
+# View the top 30 genes
+print(top_genes)
+```
+
+Top 30 genes more highly expressed in smokers compared to non-smokers
+
+```{r}
+# Assuming 'result' already contains the log2 fold change for each gene
+
+# Step 1: Filter for genes with positive log2 fold change (smokers > non-smokers)
+top_smoker_genes <- result %>%
+  filter(log2_fold_change > 0) %>%  # Keep only genes where log2_fold_change > 0 (more highly expressed in smokers)
+  arrange(desc(log2_fold_change)) %>%  # Sort by log2 fold change in descending order
+  head(30)  # Select top 30 genes
+
+# View the top 30 genes more highly expressed in smokers
+print(top_smoker_genes)
+
+```
+
+```{r}
+ggplot(top_smoker_genes, aes(x = log2_fold_change, y = reorder(gene, log2_fold_change))) +
+  geom_bar(stat = "identity", fill = "green", color = "black")
+```
+
+Top 30 genes which are less expressed in smokers compared to non-smokers
+
+```{r}
+# Assuming 'result' already contains the log2 fold change for each gene
+
+# Step 1: Filter for genes with negative log2 fold change (less expressed in smokers)
+top_non_smoker_genes <- result %>%
+  filter(log2_fold_change < 0) %>%  # Keep only genes where log2_fold_change < 0 (less expressed in smokers)
+  arrange(log2_fold_change) %>%  # Sort by log2 fold change in ascending order (most negative first)
+  head(30)  # Select top 30 genes
+
+# View the top 30 genes less expressed in smokers
+print(top_non_smoker_genes)
+
+```
