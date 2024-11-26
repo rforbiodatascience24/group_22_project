@@ -27,6 +27,15 @@ library(jsonlite)
 library(illuminaio)
 ```
 
+### Load data directories
+
+```{r}
+create_dir("../_raw")
+create_dir("../data")
+create_dir("../results")
+create_dir("../results/plots")
+```
+
 ### Load files
 
 ```{r}
