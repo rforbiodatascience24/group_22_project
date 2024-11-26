@@ -40,22 +40,10 @@ library("tidyverse")
 <!--# ---------------------------------------------------------------------- -->
 ## Title of 3
 
-:::: {.columns}
-
-::: {.column width="40%"}
-Det her står til venstre og fylder 40%
-:::
-
-::: {.column width="60%"}
-
-```{r}
-
-```
-:::
-
-::::
+![](../results/plots/description_age_boxplot.png){width=70%}
 
 
+_Figure: An example plot showing results._
 
 <!--# ---------------------------------------------------------------------- -->
 <!--# SLIDE ---------------------------------------------------------------- -->
