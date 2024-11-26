@@ -1,5 +1,4 @@
 Gene expression code:\
-\
 
 ```{r}
 # Load the dplyr library for data manipulation
@@ -20,10 +19,6 @@ result <- result %>%
   mutate(log2_fold_change = log2(`smoker` / `non-smoker`))
 
 print(result)
-
-
-
-
 
 ```
 
@@ -77,4 +72,9 @@ top_non_smoker_genes <- result %>%
 # View the top 30 genes less expressed in smokers
 print(top_non_smoker_genes)
 
+```
+
+```{r}
+ggplot(top_non_smoker_genes, aes(x = log2_fold_change, y = reorder(gene, log2_fold_change))) +
+  geom_bar(stat = "identity", fill = "green", color = "black")
 ```
