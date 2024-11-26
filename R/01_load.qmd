@@ -39,6 +39,7 @@ create_dir("../results/plots")
 ### Load files
 
 ```{r}
+file.info("../_raw/raw_annotation_cleaned.bgx")$size
 raw_dir <- "../_raw/"
 
 download_dataset_ncbi(raw_dir)
