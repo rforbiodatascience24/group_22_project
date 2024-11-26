@@ -50,8 +50,8 @@ tidy_characteristics <- ncbi_characteristics_dirty |>
                values_to = "Characteristic") |>          # all values to characteristics
   separate(Characteristic, 
            into = c("Variable", "Value"),                # making a vector to split up into variable and value 
-           sep = ": ") |>                                    # separating based on :
-           #extra = "merge") 
+           sep = ": ",
+           extra = "merge") |>                                    # separating based on 
   pivot_wider(names_from = Variable, 
               values_from = Value) |> 
   mutate(Sample_ID = sample_ids[1:nrow(.)]) |>           # taking everything from sample_ids and puts it into the new Sample_ID column 
@@ -67,6 +67,7 @@ tidy_characteristics <- tidy_characteristics |>
 
 # Debug: Verify the reshaped characteristics data
 print(head(tidy_characteristics))
+
 ```
 
 ## Tidying Gene Expression Data
