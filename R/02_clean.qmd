@@ -54,18 +54,17 @@ tidy_characteristics <- ncbi_characteristics_dirty |>
            extra = "merge") |>                                    # separating based on 
   pivot_wider(names_from = Variable, 
               values_from = Value) |> 
-  mutate(Sample_ID = sample_ids[1:nrow(.)]) |>           # taking everything from sample_ids and puts it into the new Sample_ID column 
+  mutate(Sample_ID = sample_ids[seq_len(n())]) |>           # taking everything from sample_ids and puts it into the new Sample_ID column 
   relocate(Sample_ID)                                    # moving Sample_ID to the first column
 
-
-
-# 
-# Drop the "Sample" column and remove rows with "not available"
+# Removing the sample column and dropping NAs
 tidy_characteristics <- tidy_characteristics |> 
-  select(-Sample) |>   # Drop the "Sample" column
-  filter(across(everything(), ~ !str_detect(., "not available"), .names = "check"))  # Remove rows with "not available"
+  select(-Sample) |>                          # selecting everything but the "Sample" column
+  mutate(across(everything(), ~ na_if(., "not available"))) |>  # replace "not available" with NA
+  drop_na()                                   # dropping all NA values
+  
 
-# Debug: Verify the reshaped characteristics data
+# Printing the top of the tidy_characteristics data 
 print(head(tidy_characteristics))
 
 ```
