@@ -95,115 +95,43 @@ print(head(tidy_genes))
 ## Cleaning Column Names
 
 ```{r}
-# Standardize column names for characteristics data
-colnames(tidy_characteristics) <- colnames(tidy_characteristics) %>%
-  str_replace_all("\\s+", "_") %>%          # Replace spaces with underscores
-  str_replace_all("\\.+", "_") %>%          # Replace dots with underscores
-  str_replace_all("\\(|\\)", "") %>%        # Remove parentheses
-  str_to_lower()                            # Convert to lowercase
+# Standardizing column names for characteristics data 
+colnames(tidy_characteristics) <- colnames(tidy_characteristics) |> 
+  str_replace_all("\\s+", "_") |>           # Replacing spaces with underscores
+  str_replace_all("\\.+", "_") |>           # Replacing dots with underscores
+  str_replace_all("\\(|\\)", "") |>         # Removing parentheses
+  str_to_lower()                            # Converting to lowercase
 
-# Standardize column names for gene data
-colnames(tidy_genes) <- colnames(tidy_genes) %>%
-  str_replace_all("\\s+", "_") %>%          # Replace spaces with underscores
-  str_replace_all("\\.+", "_") %>%          # Replace dots with underscores
-  str_replace_all("\\(|\\)", "") %>%        # Remove parentheses
-  str_to_lower()                            # Convert to lowercase
+# Standardizing column names for gene data
+colnames(tidy_genes) <- colnames(tidy_genes) |> 
+  str_replace_all("\\s+", "_") |>           # Replacing spaces with underscores
+  str_replace_all("\\.+", "_") |>           # Replacing dots with underscores
+  str_replace_all("\\(|\\)", "") |>         # Removing parentheses
+  str_to_lower()                            # Converting to lowercase
 
-# Debug: Verify cleaned column names
+# Printing to check that all column names are standardized 
 print(colnames(tidy_characteristics))
 print(colnames(tidy_genes))
-```
-
-## Saving the Cleaned Datasets
-
-```{r}
-# Preview the final cleaned datasets
-print(tidy_characteristics)
-print(tidy_genes)
-
-# Save the cleaned datasets to CSV files
-write.csv(tidy_characteristics, "tidy_cleaned_characteristics.csv", row.names = FALSE)
-write.csv(tidy_genes, "tidy_cleaned_genes.csv", row.names = FALSE)
-
 ```
 
 ## Merging Patient Characteristics and Gene Expression Data
 
 ```{r}
 # Merge the two datasets by `sample_id`
-merged_data <- tidy_characteristics %>%
-  left_join(tidy_genes, by = "sample_id")  # Perform the merge on `sample_id`
+merged_data <- tidy_characteristics |> 
+  left_join(tidy_genes, by = "sample_id")  # Joining the two datasets on sample_ID
 
-# Debug: Verify the merged data
+# Checking the merged data
 print(head(merged_data))
 
-# Save the merged dataset to a CSV file
-write.csv(merged_data, "merged_cleaned_data.csv", row.names = FALSE)
-
-# Optional: Print final column names to verify structure
-#print(colnames(merged_data))
 
 ```
 
-# Placeholder for data transformation from long to wide format
-
-# Uncomment and implement pivot_wider if needed
-
-# ncbi_data_wide \<- ncbi_characteristics_dirty \|\>
-
-# pivot_wider(names_from = col_1, values_from = everything())
-
-# Renaming columns for clarity
-
-ncbi_characteristics_clean \<- ncbi_characteristics_dirty \|\> rename(Sample_ID = ID_REF)
-
-# Preview cleaned characteristics data
-
-ncbi_characteristics_clean
-
-## Extracting relevant data from NCBI Data
-
-First we extract all data we want to analyze from the data set
+## Saving the final merged data to a tsv file
 
 ```{r}
-# Extracting relavant data regarding characteristics of the patients
-ncbi_characteristics_dirty <- ncbi_data |> 
-  as_tibble() |> 
-  filter(col_1 == "ID_REF" | 
-        col_1 == "!Sample_characteristics_ch1")
-
-# Extracting relavant data regarding genes and gene expression 
-ncbi_genes_dirty <- ncbi_data |> 
-  as_tibble() |> 
-  filter(col_1 == "ID_REF" |
-    str_detect(col_1,"ILMN"))
-
-# View data (dirty) 
-ncbi_characteristics_dirty
-ncbi_genes_dirty
-
-
-```
-
-## Data Wrangling - Characteristics
-
-```{r}
-
-
-# Transforming from long to wide format
-#ncbi_data_wide <- 
-
-#ncbi_data_dirty |> 
-  #pivot_wider(names_from = col_1, values_from = everything())
-
-
-# Renaming
-ncbi_data_dirty |> 
-  rename(Sample_ID = ID_REF)
-```
-
-## Data Wrangling - Genes
-
-```{r}
+# Save the merged dataset to a tsv file
+write_tsv(merged_data,
+          file = "../data/02_dat_clean.tsv")
 
 ```
