@@ -28,6 +28,7 @@ merged_data |> sample_n(5)
 library(dplyr)
 library(tidyr)
 library(gt)
+library(gridExtra)
 
 # Step 1: Compute Summary Statistics
 summary_table <- merged_data |>
@@ -39,7 +40,7 @@ summary_table <- merged_data |>
     `Maternal BMI - mean (range)` = paste0(round(mean(maternal_bmi, na.rm = TRUE), 1), 
                                            " (", min(maternal_bmi, na.rm = TRUE), "-", max(maternal_bmi, na.rm = TRUE), ")"),
     `Gestational age (weeks) - median (range)` = paste0(median(gestational_age_weeks, na.rm = TRUE), 
-                                                        " (", min(gestational_age_weeks, na.rm = TRUE), "-", max(gestational_age_weeks, na.rm = TRUE), ")"),
+                                                      " (", min(gestational_age_weeks, na.rm = TRUE), "-", max(gestational_age_weeks, na.rm = TRUE), ")"),
     `Parity (1/2/3/4/5/7)` = paste(table(parity), collapse = "/"),
     `Mode of delivery (vaginal/caesarean)` = paste(sum(mode_of_delivery == "vaginal", na.rm = TRUE), "/", 
                                                    sum(mode_of_delivery == "caesarean", na.rm = TRUE)),
@@ -64,14 +65,20 @@ formatted_table
 
 
 
-
 # Percentages of non_smoker, smoker and overall in the different categories
-#num_mothers = 74
+label(merged_data$age_years) <- "Age (Years)"
+label(merged_data$maternal_bmi) <- "Maternal BMI"
+label(merged_data$gestational_age_weeks) <- "Gestational Age (Weeks)"
+label(merged_data$placental_volume_cm3) <- "Placental Volume (cm³)"
 
-#merged_data |>
-#  slice_head(n = num_mothers) |> 
-#  table1(x = formula(~ age_years + maternal_bmi + gestational_age_weeks | status),
-#         data = _)
+# Generate the table with customized labels
+merged_data |>
+  slice_head(n = num_mothers) |>
+  table1(
+    x = formula(~ age_years + maternal_bmi + gestational_age_weeks + placental_volume_cm3 | status),
+    data = _
+  )
+
 
 ```
 
