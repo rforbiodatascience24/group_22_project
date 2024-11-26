@@ -4,14 +4,55 @@ format: html
 editor: visual
 ---
 
-## xx
+## Bar plot
+
+#### Packages
 
 ```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
 
 ```
 
-## xx
+#### Comparing gene expression of genes referred to in article of smokers and non-smokers
 
 ```{r}
+# Select relevant columns
+selected_genes <- merged_data |> 
+  select(status, ilmn_1693338, ilmn_1714167, ilmn_1706643, ilmn_1701308, ilmn_1785272, ilmn_1717163, ilmn_1805543, ilmn_1779558)
+
+# Reshape and compute means
+mean_expression <- selected_genes |> 
+  pivot_longer(
+    cols = starts_with("ilmn"), # Select columns to reshape
+    names_to = "Gene",          # Name of the new column for genes
+    values_to = "Expression"    # Name of the new column for gene expressions
+  ) |> 
+  group_by(status, Gene) |>     # Group by status and Gene
+  summarise(MeanExpression = mean(Expression, na.rm = TRUE), .groups = "drop") # Compute the mean
+
+# Print the result
+print(mean_expression)
+```
+
+#### Plotting
+
+```{r}
+
+# Create the bar plot
+ggplot(mean_expression, aes(x = Gene, 
+                            y = MeanExpression, 
+                            fill = status)) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Mean Gene Expression by Smoking Status",
+    x = "Gene",
+    y = "Mean Expression",
+    fill = "Status"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, 
+                                   hjust = 1))
 
 ```

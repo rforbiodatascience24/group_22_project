@@ -47,3 +47,4 @@ read_bgx_file <- function(raw_dir, file_name) {
   return (readBGX(outputFilePath))
 
 }
+
