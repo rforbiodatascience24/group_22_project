@@ -72,19 +72,23 @@ print(head(tidy_characteristics))
 ## Tidying Gene Expression Data
 
 ```{r}
-# Transpose and tidy the gene expression data
-tidy_genes <- ncbi_genes_dirty %>%
-  pivot_longer(cols = -col_1, names_to = "Sample", values_to = "Expression") %>%
-  pivot_wider(names_from = col_1, values_from = Expression) %>%
-  mutate(Sample_ID = sample_ids[1:nrow(.)]) %>%  # Align sample IDs
-  relocate(Sample_ID)  # Move Sample_ID to the first column
+# Transposing and tidying the gene expression data
+tidy_genes <- ncbi_genes_dirty |> 
+  pivot_longer(cols = -col_1,                  # everything but col1
+               names_to = "Sample",
+               values_to = "Expression") |> 
+  pivot_wider(names_from = col_1,             # col1 contains the genes
+              values_from = Expression) |>    # all expression values
+  mutate(Sample_ID = sample_ids[seq_len(n())]) |>   # adding the sample_IDs in a new column
+  relocate(Sample_ID)  # moving Sample_ID to the first column
 
-# Drop the "Sample" column and remove rows with "not available"
-tidy_genes <- tidy_genes %>%
-  select(-Sample) %>%  # Drop the "Sample" column
-  filter(across(everything(), ~ !str_detect(., "not available"), .names = "check"))  # Remove rows with "not available"
+# Removing the sample column and dropping NAs
+tidy_genes <- tidy_genes |> 
+  select(-Sample) |>   # selecting everything but the "Sample" column
+  mutate(across(everything(), ~ na_if(., "not available"))) |>  # replace "not available" with NA
+  drop_na()                                   # dropping all NA values
 
-# Debug: Verify the reshaped gene data
+# Printing the top of the tidy_genes data 
 print(head(tidy_genes))
 ```
 
