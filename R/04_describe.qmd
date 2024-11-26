@@ -4,4 +4,68 @@ format: html
 editor: visual
 ---
 
-## 
+```{r}
+#| message: false
+library(tidyverse)
+library(table1)
+library(patchwork)
+library(ggplot2)
+library(dplyr)
+```
+
+## Description
+
+```{r}
+# Rows and columns in the last 
+print(nrow(merged_data))
+print(ncol(merged_data))
+merged_data |> sample_n(5)
+
+
+```
+
+```{r}
+# Percentages of non_smoker, smoker and overall in the different categories
+num_mothers = 74
+
+merged_data |>
+  slice_head(n = num_mothers) |> 
+  table1(x = formula(~ age_years + maternal_bmi + gestational_age_weeks | status),
+         data = _)
+
+```
+
+```{r}
+
+merged_data |>
+  ggplot(aes(x = status, y = age_years, fill = status)) +
+  geom_boxplot() +
+  labs(
+    x = "Status",
+    y = "Age (years)",
+    title = "Boxplot of Age by Smoking Status"
+  ) +
+  theme_minimal()
+
+  
+
+#ggsave("../results/plots/description_age_boxplot.png")
+
+
+```
+
+```{r}
+labs(y = "Mother age (years)",
+       x= "",
+       caption = "",
+       title = "Mother's age",
+       fill = "Smoking Status") +
+  theme(legend.position = "bottom",
+        legend.direction = "vertical",
+        legend.title = element_text(size=10),
+        legend.text = element_text(size=8),
+        plot.margin=grid::unit(c(0,0,0,0), "mm"))  +
+  theme_minimal() + 
+  scale_fill_manual(values = c("gold2","red"))
+```
+

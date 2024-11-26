@@ -121,6 +121,12 @@ print(colnames(tidy_genes))
 merged_data <- tidy_characteristics |> 
   left_join(tidy_genes, by = "sample_id")  # Joining the two datasets on sample_ID
 
+# Convert columns to numeric values
+cols_not_to_convert <- c("sample_id", "status", "mode_of_delivery")
+cols_to_convert <- setdiff(colnames(merged_data), cols_not_to_convert)
+merged_data[cols_to_convert] <- lapply(merged_data[cols_to_convert], function(x) as.numeric(as.character(x)))
+
+
 # Checking the merged data
 print(head(merged_data))
 
