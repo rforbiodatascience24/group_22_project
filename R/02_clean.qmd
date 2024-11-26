@@ -11,41 +11,144 @@ editor: visual
 library(tidyverse)
 ```
 
+## Extracting Sample IDs
+
 ```{r}
-# Load data from a compressed tab-separated file
-ncbi_data <- read_tsv("../data/01_ncbi_data.tsv.gz")
+# Inspect the dataset systematically to locate the actual sample IDs
+print(head(ncbi_data, 10))  # Inspect the first 10 rows to locate where sample IDs like GSM451162 are stored
+sample_id_row <- ncbi_data[which(ncbi_data$col_1 == "ID_REF"), -1]  # Adjust "ID_REF" if needed to match the key identifier
+sample_ids <- as.character(sample_id_row)
+
+# Debug: Print extracted sample IDs
+print(sample_ids)
 ```
 
+## Extracting and Filtering Relevant Data
+
 ```{r}
-# Extracting patient characteristics
-ncbi_characteristics_dirty <- ncbi_data |> 
-  as_tibble() |> 
-  filter(col_1 == "ID_REF" | 
-         col_1 == "!Sample_characteristics_ch1")
+# Extract patient characteristics data
+ncbi_characteristics_dirty <- ncbi_data %>%
+  as_tibble() %>%
+  filter(col_1 == "!Sample_characteristics_ch1") %>%
+  select(-col_1)  # Drop the first column
 
-# Extracting gene and gene expression data
-ncbi_genes_dirty <- ncbi_data |> 
-  as_tibble() |> 
-  filter(col_1 == "ID_REF" | 
-         str_detect(col_1, "ILMN"))
+# Extract gene expression data
+ncbi_genes_dirty <- ncbi_data %>%
+  as_tibble() %>%
+  filter(str_detect(col_1, "^ILMN"))  # Filter rows with gene IDs (e.g., starting with "ILMN")
 
-# Preview extracted data (raw and unprocessed)
-ncbi_characteristics_dirty
-ncbi_genes_dirty
+# Debug: View the filtered data
+print(head(ncbi_characteristics_dirty))
+print(head(ncbi_genes_dirty))
+```
+
+## Tidying Patient Characteristics Data
+
+```{r}
+# Transpose and tidy the characteristics data
+tidy_characteristics <- ncbi_characteristics_dirty %>%
+  pivot_longer(cols = everything(), names_to = "Sample", values_to = "Characteristic") %>%
+  separate(Characteristic, into = c("Variable", "Value"), sep = ": ", extra = "merge") %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>%
+  mutate(Sample_ID = sample_ids[1:nrow(.)]) %>%  # Align sample IDs
+  relocate(Sample_ID)  # Move Sample_ID to the first column
+
+# Drop the "Sample" column and remove rows with "not available"
+tidy_characteristics <- tidy_characteristics %>%
+  select(-Sample) %>%  # Drop the "Sample" column
+  filter(across(everything(), ~ !str_detect(., "not available"), .names = "check"))  # Remove rows with "not available"
+
+# Debug: Verify the reshaped characteristics data
+print(head(tidy_characteristics))
+```
+
+## Tidying Gene Expression Data
+
+```{r}
+# Transpose and tidy the gene expression data
+tidy_genes <- ncbi_genes_dirty %>%
+  pivot_longer(cols = -col_1, names_to = "Sample", values_to = "Expression") %>%
+  pivot_wider(names_from = col_1, values_from = Expression) %>%
+  mutate(Sample_ID = sample_ids[1:nrow(.)]) %>%  # Align sample IDs
+  relocate(Sample_ID)  # Move Sample_ID to the first column
+
+# Drop the "Sample" column and remove rows with "not available"
+tidy_genes <- tidy_genes %>%
+  select(-Sample) %>%  # Drop the "Sample" column
+  filter(across(everything(), ~ !str_detect(., "not available"), .names = "check"))  # Remove rows with "not available"
+
+# Debug: Verify the reshaped gene data
+print(head(tidy_genes))
+```
+
+## Cleaning Column Names
+
+```{r}
+# Standardize column names for characteristics data
+colnames(tidy_characteristics) <- colnames(tidy_characteristics) %>%
+  str_replace_all("\\s+", "_") %>%          # Replace spaces with underscores
+  str_replace_all("\\.+", "_") %>%          # Replace dots with underscores
+  str_replace_all("\\(|\\)", "") %>%        # Remove parentheses
+  str_to_lower()                            # Convert to lowercase
+
+# Standardize column names for gene data
+colnames(tidy_genes) <- colnames(tidy_genes) %>%
+  str_replace_all("\\s+", "_") %>%          # Replace spaces with underscores
+  str_replace_all("\\.+", "_") %>%          # Replace dots with underscores
+  str_replace_all("\\(|\\)", "") %>%        # Remove parentheses
+  str_to_lower()                            # Convert to lowercase
+
+# Debug: Verify cleaned column names
+print(colnames(tidy_characteristics))
+print(colnames(tidy_genes))
+```
+
+## Saving the Cleaned Datasets
+
+```{r}
+# Preview the final cleaned datasets
+print(tidy_characteristics)
+print(tidy_genes)
+
+# Save the cleaned datasets to CSV files
+write.csv(tidy_characteristics, "tidy_cleaned_characteristics.csv", row.names = FALSE)
+write.csv(tidy_genes, "tidy_cleaned_genes.csv", row.names = FALSE)
+
+```
+
+## Merging Patient Characteristics and Gene Expression Data
+
+```{r}
+# Merge the two datasets by `sample_id`
+merged_data <- tidy_characteristics %>%
+  left_join(tidy_genes, by = "sample_id")  # Perform the merge on `sample_id`
+
+# Debug: Verify the merged data
+print(head(merged_data))
+
+# Save the merged dataset to a CSV file
+write.csv(merged_data, "merged_cleaned_data.csv", row.names = FALSE)
+
+# Optional: Print final column names to verify structure
+#print(colnames(merged_data))
+
 ```
 
 # Placeholder for data transformation from long to wide format
+
 # Uncomment and implement pivot_wider if needed
-# ncbi_data_wide <- ncbi_characteristics_dirty |> 
-#   pivot_wider(names_from = col_1, values_from = everything())
+
+# ncbi_data_wide \<- ncbi_characteristics_dirty \|\>
+
+# pivot_wider(names_from = col_1, values_from = everything())
 
 # Renaming columns for clarity
-ncbi_characteristics_clean <- ncbi_characteristics_dirty |> 
-  rename(Sample_ID = ID_REF)
+
+ncbi_characteristics_clean \<- ncbi_characteristics_dirty \|\> rename(Sample_ID = ID_REF)
 
 # Preview cleaned characteristics data
-ncbi_characteristics_clean
 
+ncbi_characteristics_clean
 
 ## Extracting relevant data from NCBI Data
 
