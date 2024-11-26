@@ -25,19 +25,59 @@ merged_data |> sample_n(5)
 ```
 
 ```{r}
-# Percentages of non_smoker, smoker and overall in the different categories
-num_mothers = 74
+library(dplyr)
+library(tidyr)
+library(gt)
 
-merged_data |>
-  slice_head(n = num_mothers) |> 
-  table1(x = formula(~ age_years + maternal_bmi + gestational_age_weeks | status),
-         data = _)
+# Step 1: Compute Summary Statistics
+summary_table <- merged_data |>
+  group_by(status) |>
+  summarise(
+    `Study cohort (N)` = as.character(n()),  # Convert integer to character
+    `Age (years) - median (range)` = paste0(median(age_years, na.rm = TRUE), 
+                                            " (", min(age_years, na.rm = TRUE), "-", max(age_years, na.rm = TRUE), ")"),
+    `Maternal BMI - mean (range)` = paste0(round(mean(maternal_bmi, na.rm = TRUE), 1), 
+                                           " (", min(maternal_bmi, na.rm = TRUE), "-", max(maternal_bmi, na.rm = TRUE), ")"),
+    `Gestational age (weeks) - median (range)` = paste0(median(gestational_age_weeks, na.rm = TRUE), 
+                                                        " (", min(gestational_age_weeks, na.rm = TRUE), "-", max(gestational_age_weeks, na.rm = TRUE), ")"),
+    `Parity (1/2/3/4/5/7)` = paste(table(parity), collapse = "/"),
+    `Mode of delivery (vaginal/caesarean)` = paste(sum(mode_of_delivery == "vaginal", na.rm = TRUE), "/", 
+                                                   sum(mode_of_delivery == "caesarean", na.rm = TRUE)),
+    `Placental volume (cm³) - mean (range)` = paste0(round(mean(placental_volume_cm3, na.rm = TRUE), 1), 
+                                                     " (", min(placental_volume_cm3, na.rm = TRUE), "-", max(placental_volume_cm3, na.rm = TRUE), ")")
+  )
+
+# Step 2: Flip the Table
+flipped_table <- summary_table |>
+  pivot_longer(-status, names_to = "Parameter", values_to = "Value") |>
+  pivot_wider(names_from = status, values_from = Value)
+
+# Step 3: Format as a Table
+formatted_table <- flipped_table |>
+  gt() |>
+  tab_header(
+    title = "Summary Statistics by Parameter"
+  )
+
+# Display the Table
+formatted_table
+
+
+
+
+# Percentages of non_smoker, smoker and overall in the different categories
+#num_mothers = 74
+
+#merged_data |>
+#  slice_head(n = num_mothers) |> 
+#  table1(x = formula(~ age_years + maternal_bmi + gestational_age_weeks | status),
+#         data = _)
 
 ```
 
 ```{r}
 
-merged_data |>
+bp_age <- merged_data |>
   ggplot(aes(x = status, y = age_years, fill = status)) +
   geom_boxplot() +
   labs(
@@ -45,27 +85,114 @@ merged_data |>
     y = "Age (years)",
     title = "Boxplot of Age by Smoking Status"
   ) +
-  theme_minimal()
+  scale_fill_manual(
+      values = c("non-smoker" = "#F9A1A1", "smoker" = "#63B8B8")
+    ) +
+  theme(
+      panel.background = element_rect(fill = "white"),
+      plot.background = element_rect(fill = "white"),
+      panel.grid.major = element_line(color = "gray90"),
+      panel.grid.minor = element_blank(),
+      axis.text = element_text(size = 5, color = "black"),
+      axis.title = element_text(size = 7, color = "black"),
+      plot.title = element_text(size = 7
+                                , face = "bold", color = "black"))
 
-  
-
-#ggsave("../results/plots/description_age_boxplot.png")
+ggsave("../results/plots/description_age_boxplot.png")
 
 
 ```
 
 ```{r}
-labs(y = "Mother age (years)",
-       x= "",
-       caption = "",
-       title = "Mother's age",
-       fill = "Smoking Status") +
-  theme(legend.position = "bottom",
-        legend.direction = "vertical",
-        legend.title = element_text(size=10),
-        legend.text = element_text(size=8),
-        plot.margin=grid::unit(c(0,0,0,0), "mm"))  +
-  theme_minimal() + 
-  scale_fill_manual(values = c("gold2","red"))
+bp_maternal_bmi <- merged_data |>
+  ggplot(aes(x = status, y = maternal_bmi, fill = status)) +
+  geom_boxplot() +
+  labs(
+    x = "Status",
+    y = "Maternal BMI",
+    title = "Boxplot of Maternal BMI by Smoking Status"
+  ) +
+  scale_fill_manual(
+      values = c("non-smoker" = "#F9A1A1", "smoker" = "#63B8B8")
+    ) +
+  theme(
+      panel.background = element_rect(fill = "white"),
+      plot.background = element_rect(fill = "white"),
+      panel.grid.major = element_line(color = "gray90"),
+      panel.grid.minor = element_blank(),
+      axis.text = element_text(size = 5, color = "black"),
+      axis.title = element_text(size = 7, color = "black"),
+      plot.title = element_text(size = 7, face = "bold", color = "black"))
+
+ggsave("../results/plots/description_maternal_bmi_boxplot.png")
+
+  
 ```
 
+```{r}
+bp_placental_volume <- merged_data |>
+  ggplot(aes(x = status, y = placental_volume_cm3, fill = status)) +
+  geom_boxplot() +
+  labs(
+    x = "Status",
+    y = "Placental volume in cm3",
+    title = "Boxplot of Placental Volume by Smoking Status"
+  ) +
+  scale_fill_manual(
+    values = c("non-smoker" = "#F9A1A1", "smoker" = "#63B8B8")
+  ) +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    plot.background = element_rect(fill = "white"),
+    panel.grid.major = element_line(color = "gray90"),
+    panel.grid.minor = element_blank(),
+    axis.text = element_text(size = 5, color = "black"),
+    axis.title = element_text(size = 7, color = "black"),
+    plot.title = element_text(size = 7, face = "bold", color = "black"))
+
+ggsave("../results/plots/description_placental_volume_boxplot.png")
+
+```
+
+```{r}
+(bp_placental_volume + theme(legend.position = "none") + 
+     (bp_maternal_bmi + theme(legend.position = "none")
+      )) / bp_age + 
+     
+     plot_annotation(title = "Comparison by Smoking Status",
+                     caption = "Data from NCBI (2009)",
+                     theme = theme(legend.position = "topright",
+                                   plot.title = element_text(size = 10,
+                                                             hjust = 0.5, 
+                                                             face = "bold", 
+                                                             margin = margin(0,0,0,0),
+                                                             color = "black"),
+                                   plot.margin=grid::unit(c(t = 0, r = 0, b = 0, l = -1.3), "mm"))) +
+  plot_layout(guides = "collect", heights = unit(c(1.35, 2.35), c('cm', 'cm')))
+ggsave("../results/plots/description_combined_plot1.png")
+combined_plot1
+
+```
+
+```{r}
+
+# Subset numeric columns (e.g., ilmn columns)
+gene_data <- merged_data |>
+  select(starts_with("ilmn_"))
+
+heatmap(as.matrix(gene_data), scale = "row", 
+        main = "Heatmap of Gene Expression")
+
+```
+
+```{r}
+ggplot(merged_data, aes(x = mode_of_delivery, y = maternal_bmi, fill = mode_of_delivery)) +
+  geom_violin(trim = FALSE) +
+  labs(title = "Maternal BMI by Mode of Delivery", x = "Mode of Delivery", y = "Maternal BMI") +
+  theme_minimal()
+
+```
+
+```{r}
+
+```
