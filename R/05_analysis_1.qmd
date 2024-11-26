@@ -1,17 +1,17 @@
 ---
-title: "analysis"
+title: "05_analysis_1"
 format: html
 editor: visual
 ---
 
-## Nico og Ulrikke
-
-```{r}
-ggplot(clean_data, aes(x = expression)) +
-    geom_histogram(bins = 10) 
-```
+## xx
 
 ```{r}
 
 ```
 
+## xx
+
+```{r}
+
+```
