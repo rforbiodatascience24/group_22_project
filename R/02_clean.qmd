@@ -7,7 +7,6 @@ editor: visual
 ## Loading Required Libraries
 
 ```{r}
-# Suppress package messages
 library(tidyverse)
 ```
 
@@ -15,7 +14,6 @@ library(tidyverse)
 
 ```{r}
 # Inspect the dataset systematically to locate the actual sample IDs
-print(head(ncbi_data, 10))  # Inspect the first 10 rows to locate where sample IDs like GSM451162 are stored
 sample_id_row <- ncbi_data[which(ncbi_data$col_1 == "ID_REF"), -1]  # Adjust "ID_REF" if needed to match the key identifier
 sample_ids <- as.character(sample_id_row)
 
